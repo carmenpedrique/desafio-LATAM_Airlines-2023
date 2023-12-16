@@ -1,0 +1,24 @@
+# Archivos de entornos virtuales
+venv/
+.env/
+
+# Archivos compilados de Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Carpetas de logs
+logs/
+*.log
+
+# Archivos y carpetas de configuración del IDE
+.vscode/       # Configuraciones específicas de Visual Studio Code
+
+# Archivos de sistema operativo
+Thumbs.db      # Archivos específicos de Windows
+
+# Otros archivos que deben ser ignorados
+*.bak
+*.tmp
+Comandos.sh
