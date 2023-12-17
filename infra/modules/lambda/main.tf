@@ -5,7 +5,7 @@ resource "aws_lambda_function" "lambda_function" {
   role          = aws_iam_role.lambda_role.arn
 
   # Configura la imagen de ECR como origen
-  image_uri        = "your-ecr-repository-uri"
+  image_uri        = "${ecr_repository_url}:$IMAGE_TAG"
   package_type     = "Image"
 
   # Asegurarse de que los logs se envíen a CloudWatch
