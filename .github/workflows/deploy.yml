@@ -1,3 +1,4 @@
+
 name: CI/CD Pipeline
 
 on:
@@ -5,6 +6,12 @@ on:
     branches:
       - main
       - develop
+    paths:
+      - 'app/lambda_functions/**'
+      - 'app/pub_sub/**'
+      - 'infra/**'
+env:
+  ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
 
 jobs:
   test:
@@ -34,12 +41,34 @@ jobs:
         cd test/integration
         python -m unittest discover
 
-  deploy:
-    needs: test
+  build_and_push:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Set matrix for build steps
+        id: set-matrix
+        run: bash set_build_matrix.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+    needs: [build_and_push, test]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.build_and_push.outputs.matrix)}}
+    steps:
+
     - name: Checkout repository
       uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
 
     - name: Set up AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -48,13 +77,51 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-west-2
 
-    - name: Build and push Docker image to ECR
+    - name: Build and push Docker image to ECR for changed functions
       run: |
-        chmod +x ./app/build_and_push.sh
-        ./app/build_and_push.sh
+        chmod +x ./app/pub_sub/build_and_push.sh
+        ./app/pub_sub/build_and_push.sh
+        chmod +x ./app/lambda_function/build_and_push.sh
+        ./app/lambda_function/build_and_push.sh        
 
-    # Opcional: Deploy usando Terraform (si aplica)
+      # Deploy lambda_expose function
+      - name: Deploy lambda_expose function
+        if: contains(matrix.lambda_functions, 'lambda_expose') || contains(matrix.pub_sub, 'lambda_publisher')
+        run: |
+          ./app/lambda_function/build_and_push.sh
+          IMAGE_URI="${{ env.REPOSITORY_NAME }}:${{ ENVIRONMENT }}-${{ github.sha }}"
+          aws lambda update-function-code --function-name lambda_expose --image-uri $ECR_URI:$IMAGE_TAG
+          LATEST_VERSION=$(aws lambda publish-version --function-name lambda_expose --description "Deployed via CI/CD" --query 'Version' --output text)
+          aws lambda update-alias --function-name lambda_expose --name ${{ ENVIRONMENT }} --function-version $LATEST_VERSION
+
+      # Deploy lambda_ingest function
+      - name: Deploy lambda_ingest function
+        if: contains(matrix.lambda_functions, 'lambda_ingest') || contains(matrix.pub_sub, 'lambda_publisher')
+        run: |
+          aws lambda update-function-code --function-name lambda_ingest --zip-file fileb://lambda_functions/lambda_ingest.zip
+          LATEST_VERSION=$(aws lambda publish-version --function-name lambda_ingest --description "Deployed via CI/CD" --query 'Version' --output text)
+          aws lambda update-alias --function-name lambda_ingest --name ${{ ENVIRONMENT }} --function-version $LATEST_VERSION
+
+      # Deploy lambda_publisher function
+      - name: Deploy lambda_publisher function
+        if: contains(matrix.lambda_functions, 'lambda_publisher') || contains(matrix.pub_sub, 'lambda_publisher')
+        run: |
+          aws lambda update-function-code --function-name lambda_publisher --zip-file fileb://lambda_functions/lambda_ingest.zip
+          LATEST_VERSION=$(aws lambda publish-version --function-name lambda_publisher --description "Deployed via CI/CD" --query 'Version' --output text)
+          aws lambda update-alias --function-name lambda_publisher --name ${{ ENVIRONMENT }} --function-version $LATEST_VERSION
+
+      # Deploy lambda_subscriber function
+      - name: Deploy lambda_subscriber function
+        if: contains(matrix.lambda_functions, 'lambda_subscriber') || contains(matrix.pub_sub, 'lambda_publisher')
+        run: |
+          aws lambda update-function-code --function-name lambda_subscriber --zip-file fileb://lambda_functions/lambda_ingest.zip
+          LATEST_VERSION=$(aws lambda publish-version --function-name lambda_subscriber --description "Deployed via CI/CD" --query 'Version' --output text)
+          aws lambda update-alias --function-name lambda_subscriber --name ${{ ENVIRONMENT }} --function-version $LATEST_VERSION
+
+
+    # Opcional: Deploy usando Terraform 
     - name: Deploy using Terraform
+      if: contains(github.event.head_commit.modified, 'infra/') || contains(github.event.head_commit.added, 'infra/')
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -62,4 +129,4 @@ jobs:
       run: |
         cd infra
         terraform init
-        terraform apply -auto-approve
+        terraform apply -auto-approve -var="image_tag=${{ github.sha }}"
