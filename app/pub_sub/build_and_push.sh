@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Definir variables
-ECR_REPOSITORY=your-ecr-repository-uri
 IMAGE_TAG=lambda-pubsub
 
 # Login en ECR
