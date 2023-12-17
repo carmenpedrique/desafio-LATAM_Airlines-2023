@@ -1,12 +1,41 @@
-name: Deploy Lambda Functions
+name: CI/CD Pipeline
 
 on:
   push:
     branches:
       - main
+      - develop
 
 jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run unit tests
+      run: |
+        cd test/unit
+        python -m unittest discover
+
+    - name: Run integration tests
+      run: |
+        cd test/integration
+        python -m unittest discover
+
   deploy:
+    needs: test
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -24,3 +53,13 @@ jobs:
         chmod +x ./app/build_and_push.sh
         ./app/build_and_push.sh
 
+    # Opcional: Deploy usando Terraform (si aplica)
+    - name: Deploy using Terraform
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: us-west-2
+      run: |
+        cd infra
+        terraform init
+        terraform apply -auto-approve
