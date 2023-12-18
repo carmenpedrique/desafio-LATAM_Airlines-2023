@@ -16,7 +16,7 @@ La arquitectura del sistema se basa en varios servicios clave de AWS, incluyendo
 
 ## CI/CD y Prácticas DevOps
 
-Se implementan prácticas de DevOps y CI/CD para automatizar y mejorar el proceso de despliegue y mantenimiento. Esto incluye la integración con herramientas como GitHub Actions o AWS CodePipeline para la automatización de despliegues y pruebas.
+Se implementan prácticas de DevOps y CI/CD para automatizar y mejorar el proceso de despliegue y mantenimiento. Esto se realiza implementando GitHub Actions.
 
 ---
 
