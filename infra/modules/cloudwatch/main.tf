@@ -37,7 +37,7 @@ resource "aws_cloudwatch_metric_alarm" "rds_high_cpu_usage" {
 
 # Dashboard de CloudWatch
 resource "aws_cloudwatch_dashboard" "main_dashboard" {
-  dashboard_name = "MyApplicationDashboard"
+  dashboard_name = "LATAM_AirlinesDashboard"
 
   dashboard_body = <<EOF
 {
@@ -55,7 +55,7 @@ resource "aws_cloudwatch_dashboard" "main_dashboard" {
         ],
         "period": 300,
         "stat": "Sum",
-        "title": "Lambda Invocations and Errors"
+        "title": "Invocaciones y errores de Lambda"
       }
     },
     {
@@ -70,7 +70,7 @@ resource "aws_cloudwatch_dashboard" "main_dashboard" {
         ],
         "period": 60,
         "stat": "Average",
-        "title": "RDS CPU Utilization"
+        "title": "Utilización CPU RDS"
       }
     }
     // Puedes agregar más widgets según sea necesario

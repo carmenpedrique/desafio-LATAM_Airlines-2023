@@ -9,6 +9,7 @@ La arquitectura propuesta incluirá los siguientes componentes:
 - CI/CD: utilizando herramientas como GitHub Actions, Jenkins o AWS CodePipeline para automatizar el despliegue de Lambda y la infraestructura con Terraform.
 
 ## Diagrama de Arquitectura 
+   
 
 ## Explicación del Diagrama de Arquitectura
 
