@@ -15,15 +15,33 @@ module "apigateway" {
   lambda_expose_arn = module.lambda.lambda_expose_arn
 }
 
-
-module "lambda" {
+module "lambda_expose" {
   source = "./modules/lambda"
-  # Pasar variables necesarias para el módulo Lambda
+  function_name = "lambda_expose"
+ 
+}
+
+module "lambda_ingest" {
+  source = "./modules/lambda"
+  function_name = "lambda_ingest"
+ 
+}
+
+module "lambda_publisher" {
+  source = "./modules/lambda"
+  function_name = "lambda_publisher"
+ 
+}
+
+module "lambda_subscriber" {
+  source = "./modules/lambda"
+  function_name = "lambda_subscriber"
+ 
 }
 
 module "cloudwatch" {
   source = "./modules/cloudwatch"
-  # Pasar variables necesarias para el módulo CloudWatch
+   
 }
 
 module "sns_pub_sub" {
@@ -34,7 +52,10 @@ module "sns_pub_sub" {
 module "sns_alerts" {
   source = "./modules/sns/alerts"
   alerts_topic_name = "my-alerts-topic"
-  email_address     = "example@example.com"
+  email_address     = "alertas@la-empresa.com"
 }
 
-
+module "sqs" {
+  source = "./modules/sqs"
+ 
+}
