@@ -1,3 +1,8 @@
+variable "aws_region" {
+  description = "La región de AWS donde se desplegarán los recursos"
+  type        = string
+  default     = "us-west-2"
+}
 variable "lambda_function_name" {
   description = "The name of the Lambda function"
   type        = string
@@ -40,5 +45,16 @@ variable "rds_cpu_utilization_threshold" {
 
 variable "sns_topic_arn" {
   description = "The ARN of the SNS topic for alarm notifications"
+  type        = string
+}
+
+
+variable "api_gateway_name" {
+  description = "El nombre de la API Gateway"
+  type        = string
+}
+
+variable "api_gateway_id" {
+  description = "El ID de la API Gateway"
   type        = string
 }

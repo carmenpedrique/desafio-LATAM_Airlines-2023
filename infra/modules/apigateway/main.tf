@@ -1,5 +1,5 @@
 resource "aws_api_gateway_rest_api" "api" {
-  name        = "MyDataAPI"
+  name        = var.api_gateway_name
   description = "API para gestión de datos"
 }
 
@@ -46,3 +46,33 @@ resource "aws_api_gateway_integration" "expose_get_lambda" {
   type        = "AWS_PROXY"
   uri         = aws_lambda_function.lambda_function_expose.invoke_arn
 }
+
+# Habilitar la recopilación de logs para API Gateway
+resource "aws_api_gateway_stage" "logs_prod" {
+  stage_name    = "prod"
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  deployment_id = aws_api_gateway_deployment.logs_prod.id
+
+  # Configurar la recopilación de logs
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.api_logs.arn
+    format          = jsonencode({
+      httpRequest = {
+        clientIp = "$context.identity.sourceIp",
+        method   = "$context.httpMethod",
+        user     = "$context.identity.user",
+        path     = "$context.resourcePath",
+        status   = "$context.status",
+        protocol = "$context.protocol",
+        responseLength = "$context.responseLength"
+      }
+    })
+  }
+}
+
+resource "aws_cloudwatch_log_group" "api_logs" {
+  name = "/aws/apigateway/${var.api_gateway_name}"
+
+  retention_in_days = 7
+}
+
