@@ -69,9 +69,8 @@ El repositorio se organiza de la siguiente manera:
 
 Este proyecto está abierto a contribuciones. Las áreas de mejora incluyen:
 
-- Integración de un pipeline CI/CD completo.
 - Implementación de agente para generación de trazas adicionales para la construcción de métricas, alertas que potencien el monitoreo activo y la Observabilidad pasiva del desempeño de la solución.
-- Definición de módulos terraform para el despliegue de la misma infra en otros proveedores cloud como GCP y Azure.
+- Definición de módulos terraform para el despliegue de la misma infra en otros proveedores cloud como GCP (Cloud Functions, CloudSQL, Pub/Sub, Cloud Monitoring, ...) y Azure (AzureFunctions, Azure API Management, Azure SQL Database, Azure Monitor, ...). Esto implicaría  una estructura diferente en la carpeta de Infra y consideraciones para el proceso CI/CD amén de los ocntenidos en app/
 - Implementación de estrategias de rollback
 - Optimización en el proceso de versionado de recursos desplejados
 
