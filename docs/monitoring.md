@@ -12,15 +12,23 @@ Hemos configurado dos alarmas críticas de CloudWatch:
 
 2. **Alarma de Alta Utilización de CPU de RDS**: Alerta cuando la utilización de CPU de la instancia de RDS supera el umbral esperado, indicando posibles problemas de rendimiento o actividad inusual.
 
-Ambas alarmas están configuradas para enviar notificaciones a un tema SNS, que está configurado para reenviar estas notificaciones al equipo responsable a través de correo electrónico.
+3. **Tasa de Errores API Gateway**: Una alarma se dispara si la cantidad de errores 5XX de la API Gateway supera un umbral definido en un periodo de tiempo específico.
+
+4. **Latencia API Gateway**: Una alarma se activa si la latencia promedio de las respuestas de la API excede un umbral, lo que podría indicar problemas de rendimiento o cuellos de botella en la infraestructura.
+
+Estas alarmas están configuradas para enviar notificaciones a un tema SNS, que está configurado para reenviar estas notificaciones al equipo responsable a través de correo electrónico.
 
 ## Dashboard de CloudWatch
 
 Se ha configurado un Dashboard de CloudWatch llamado `LATAM_AirlinesDashboard` para proporcionar una vista consolidada de métricas clave de rendimiento. Incluye widgets para:
 
+- Errores y Latencia de la API Gateway: Se puede visualizar la latencia promedio, ayudando a identificar  problemas de rendimiento que precisen atención y, con otro widget observar la tasa de errores y picos de estos en tiempo real. 
+
 - Invocaciones y Errores de Lambda: Monitorea el número total de invocaciones y errores de las funciones Lambda, proporcionando una visión de su salud y actividad.
   
 - Utilización de CPU de RDS: Muestra el uso promedio de CPU de la instancia de RDS, permitiéndonos monitorear y escalar la base de datos adecuadamente.
+
+La observabilidad no solo mejora nuestra capacidad para operar la API de manera efectiva, sino que también ofrece insights que impulsan la toma de decisiones basadas en datos y la mejora continua de la plataforma.
 
 ## Mejores Prácticas
 
