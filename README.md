@@ -29,7 +29,8 @@ El repositorio se organiza de la siguiente manera:
 
 - `.github/workflows/`: Contiene los flujos CI/CD
 - `app/`: Incluye el código fuente de la API HTTP desarrollada en Python y ejemplo pub/sub.
-- `tests/`: Alberga las pruebas unitarias y de integración.
+- `db/`: con scrits para la gestión de la base de datos
+- `test/`: Alberga las pruebas unitarias y de integración.
 - `docs/`: Documentación adicional y diagramas de arquitectura.
 - `infra/`: Contiene los scripts de Terraform para la infraestructura en la nube.
 - `README.md`: Este archivo, que proporciona una visión general y guía para el proyecto.
@@ -70,7 +71,9 @@ Este proyecto está abierto a contribuciones. Las áreas de mejora incluyen:
 
 - Integración de un pipeline CI/CD completo.
 - Implementación de agente para generación de trazas adicionales para la construcción de métricas, alertas que potencien el monitoreo activo y la Observabilidad pasiva del desempeño de la solución.
-- Definición de módulos terrafom para el despligue de la misma infra en otros proveedores cloud como GCP y Azure.
+- Definición de módulos terraform para el despliegue de la misma infra en otros proveedores cloud como GCP y Azure.
+- Implementación de estrategias de rollback
+- Optimización en el proceso de versionado de recursos desplejados
 
 ## Seguridad y Mejores Prácticas
 
