@@ -47,16 +47,6 @@ El repositorio se organiza de la siguiente manera:
 - Python 3.8 o superior
 - Docker (para contenedorización y despliegue)
 
-### Instrucciones de Despliegue manual
-
-1. **Infraestructura con Terraform:**
-   - Navega a `infra/`.
-   - Ejecuta `terraform init` y `terraform apply` para configurar la infraestructura.
-
-2. **API HTTP:**
-   - Navega a `app/`.
-   - Ejecuta `python app.py` para iniciar la API localmente.
-
 ### Pruebas unitarias
 
 - Ejecuta `pytest` en la carpeta `tests/unit` para realizar las pruebas de integración.
