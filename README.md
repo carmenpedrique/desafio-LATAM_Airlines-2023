@@ -6,22 +6,22 @@ Este proyecto es parte del desafío DevSecOps/SRE ofrecido por LATAM Airlines, e
 
 La solución propuesta se basa en la creación de una API HTTP desarrollada en Python, utilizando infraestructura como código (IaC) para su despliegue y operaciones en la nube. El proyecto también incluye un conjunto de pruebas de integración y estructura para una documentación extensiva.
 
-## Parte 1:Infraestructura e IaC
+## Parte 1: Infraestructura e IaC
 La infraestructura en la nube se despliega utilizando Terraform, que organiza la infraestructura como código en los siguientes módulos:
 
 - `modules/apigateway`: Configura el API Gateway para exponer endpoints HTTP.
 - `modules/cloudwatch`: Establece el monitoreo y las alarmas para supervisar el rendimiento y la salud de la aplicación.
 - `modules/lambda`: Despliega las funciones Lambda para el procesamiento de solicitudes HTTP y la gestión de la ingestión de datos.
-- `modules/rds`: Implementa una base de datos relacional en AWS RDS para almacenar y recuperar datos de vuelos.
+- `modules/rds`: Implementa una base de datos PostgreSQL en AWS RDS para almacenar y recuperar información del sistema.
 - `modules/sns`: Configura los tópicos SNS para el sistema Pub/Sub y para disparo de Alarmas.
-- `modules/sqs`: Establece colas SQS para manejar de manera eficiente los mensajes del sistema Pub/Sub.
+- `modules/sqs`: Establece colas SQS para manejar de manera eficiente los mensajes del sistema Pub/Sub aportando excelencia operacional y resiliencia a la solución desplegada.
 
 Se agrega `db/init_db.sql` para inicializar la base de datos PosgreSQL. 
 
 ## Parte 2: Aplicaciones y flujo CI/CD
 1. API HTTP: con el despliegie del modulo terraform `modules/apigateway` se crea una API que expone los datos en la BD y habilita la ingesta via HTTP haciendo uso de las funciones desplegadas con `modules/lambda` que corren el codigo lambda_ingest y lambda_expose ubicados en `app/lambda_functions`. 
-2. Para el despliegue de la aplicación y de la API HTTP en la nube de AWS se programó un flujo ubicado en `.github\workflows`
-3. Se agrega subscripción al sistema Pub/Sub con la deficnión de tópico SNS cuya lógica se encuentra en `app/pub_sub` 
+2. Para el despliegue de la aplicación y de la API en la nube de AWS se programó un flujo ubicado en `.github\workflows` que se acciona con push a las ramas main y develo en los paths app/ e infra/
+3. La lógica se encuentra en `app/pub_sub` incorpora sistema Pub/Sub con la definición de tópico SNS.
 
 ## Estructura del Proyecto
 
@@ -29,9 +29,9 @@ El repositorio se organiza de la siguiente manera:
 
 - `.github/workflows/`: Contiene los flujos CI/CD
 - `app/`: Incluye el código fuente de la API HTTP desarrollada en Python y ejemplo pub/sub.
-- `db/`: con scrits para la gestión de la base de datos
+- `db/`: donde van los scripts para la gestión de la base de datos
 - `test/`: Alberga las pruebas unitarias y de integración.
-- `docs/`: Documentación adicional y diagramas de arquitectura.
+- `docs/`: Documentación adicional y de arquitectura de la solución.
 - `infra/`: Contiene los scripts de Terraform para la infraestructura en la nube.
 - `README.md`: Este archivo, que proporciona una visión general y guía para el proyecto.
 
